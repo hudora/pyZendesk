@@ -14,19 +14,15 @@ from hashlib import md5
 
 __all__ = ('create_user', 'sign_link', 'create_link')
 
-# Change this to you zendesk subdomain
-DESK_URL = 'http://hudora.zendesk.com/'
-
 DEBUG_LEVEL = 1
-
 
 def create_user(name, email):
     """Create new user in Zendesk"""
     
-    url = basejoin(DESK_URL, 'users.xml')
+    url = basejoin('https://%s.zendesk.com' % os.getenv('ZENDESK_DOMAIN', ''), 'users.xml')
     auth_handler = urllib2.HTTPBasicAuthHandler()
     username, password = os.getenv('ZENDESK_CREDENTIALS', ':').split(':', 2)
-    auth_handler.add_password(realm='Web Password', uri=url, user=ADMIN_USER, passwd=ADMIN_PASS)
+    auth_handler.add_password(realm='Web Password', uri=url, user=username, passwd=password)
 
     class SetXmlContentType(urllib2.BaseHandler):
         def http_request(self, req):
@@ -42,9 +38,8 @@ def create_user(name, email):
 
 def sign_link(name, email, timestamp):
     """Sign remote auth link"""
-    
     token = name + email + os.environ.get('ZENDESK_REMOTE_AUTH_TOKEN', '') + str(timestamp)
-    return basejoin(DESK_URL, '/access/remote/?' + urlencode({
+    return basejoin('https://%s.zendesk.com' % os.getenv('ZENDESK_DOMAIN'), '/access/remote/?' + urlencode({
         'name': name,
         'email': email,
         'timestamp': timestamp,
@@ -58,9 +53,7 @@ def create_link(name, email):
 
 if __name__ == '__main__':
     from sys import argv
-    if len(argv) < 4:
-        usage()
-    elif argv[1] == 'createuser':
+    if argv[1] == 'createuser':
         print create_user(argv[2], argv[3])
     elif argv[1] == 'createlnk':
         print create_link(argv[2], argv[3])

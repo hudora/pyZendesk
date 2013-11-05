@@ -32,3 +32,7 @@ Create a signed link:
     os.environ['ZENDESK_DOMAIN'] = 'example'
     os.environ['ZENDESK_REMOTE_AUTH_TOKEN'] = 'TOKEN'
     zendesk.create_link('Joe Average', 'joe@example.com')
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/hudora/pyzendesk/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
